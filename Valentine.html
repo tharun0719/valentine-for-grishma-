@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Will you be my Valentine? 💖</title>
+
+<style>
+  :root{
+    --bg1:#2b1b24;
+    --bg2:#3a2230;
+    --pink2:#ff78bf;
+    --yes1:#ff2f97;
+    --yes2:#ff7fc3;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    overflow:hidden;
+    font-family: Arial, sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(1200px 700px at 50% 25%, rgba(255,79,163,0.14), transparent 55%),
+      linear-gradient(135deg,var(--bg1),var(--bg2));
+    position:relative;
+  }
+
+  .vignette{
+    position:fixed; inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 50% 30%, rgba(255,140,200,0.10), transparent 65%),
+      radial-gradient(1200px 800px at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+    mix-blend-mode: screen;
+    opacity:.95;
+  }
+  .grain{
+    position:fixed; inset:-40px;
+    pointer-events:none;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 4px);
+    opacity:.18;
+    filter: blur(.4px);
+    animation: grainMove 6s linear infinite;
+  }
+  @keyframes grainMove{
+    0%{ transform: translate3d(0,0,0); }
+    100%{ transform: translate3d(-40px,20px,0); }
+  }
+
+  .float{
+    position:absolute;
+    bottom:-40px;
+    user-select:none;
+    pointer-events:none;
+    opacity:.9;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,0.25));
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity:0; }
+    10%  { opacity:.95; }
+    100% { transform: translateY(-120vh) translateX(40px) scale(1.35); opacity:0; }
+  }
+
+  .screen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding: 18px;
+    opacity:1;
+    transform: translateY(0) scale(1);
+    transition: opacity .55s ease, transform .55s ease;
+    will-change: opacity, transform;
+  }
+  .screen.hide{
+    opacity:0;
+    transform: translateY(10px) scale(0.985);
+    pointer-events:none;
+  }
+
+  .askWrap{
+    width:min(820px, 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 12px;
+  }
+
+  .typeBox{
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--pink2);
+    text-shadow: 0 0 22px rgba(255,79,163,0.30);
+    letter-spacing: .4px;
+    text-align:center;
+    min-height: 120px;
+    line-height: 1.25;
+    white-space: pre-line;
+  }
+
+  .cursor{
+    display:inline-block;
+    width: 10px;
+    margin-left: 2px;
+    animation: blink .9s infinite;
+  }
+  @keyframes blink{
+    0%,50%{ opacity:1; }
+    51%,100%{ opacity:0; }
+  }
+
+  .hintRow{
+    font-size: 28px;
+    opacity:.95;
+    display:none;
+  }
+
+  .btnStack{
+    margin-top: 8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 14px;
+    position:relative;
+  }
+
+  .btn{
+    border:none;
+    border-radius: 999px;
+    padding: 14px 36px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor:pointer;
+    color:#fff;
+    min-width: 230px;
+    box-shadow: 0 14px 26px rgba(0,0,0,0.35);
+    transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+    white-space:nowrap;
+  }
+  .btn:active{ transform: scale(.97); }
+
+  .btnYes{
+    background: linear-gradient(135deg, var(--yes1), var(--yes2));
+    animation: glow 1.6s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%{ filter: drop-shadow(0 0 0 rgba(255,79,163,0)); }
+    50%{ filter: drop-shadow(0 0 20px rgba(255,79,163,0.65)); }
+    100%{ filter: drop-shadow(0 0 0 rgba(255,79,163,0)); }
+  }
+
+  .btnNo{
+    background: rgba(255,255,255,0.12);
+    color: #ffb7d6;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.28);
+  }
+
+  #confettiCanvas{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+  }
+  .yayWrap{
+    width:min(900px, 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 16px;
+  }
+  .yayTitle{
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--pink2);
+    text-shadow: 0 0 24px rgba(255,79,163,0.36);
+    letter-spacing: 1px;
+    margin-top: 10px;
+  }
+  .yaySub{
+    font-size: 22px;
+    color: #ffb7d6;
+    opacity:.95;
+    text-align:center;
+  }
+  .emojiLine{
+    margin-top: 6px;
+    font-size: 26px;
+    opacity:.95;
+    text-align:center;
+  }
+
+  .waitText{
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--pink2);
+    text-align:center;
+    text-shadow: 0 0 22px rgba(255,79,163,0.35);
+    letter-spacing:.6px;
+    min-height: 70px;
+    padding: 0 8px;
+    white-space: pre-line;
+  }
+
+  .envWrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 10px;
+  }
+
+  .envelope{
+    width: 270px;
+    height: 185px;
+    border-radius: 16px;
+    position:relative;
+    cursor:pointer;
+    transform: rotate(-2deg);
+    transition: transform .2s ease;
+    filter: drop-shadow(0 18px 26px rgba(0,0,0,0.45));
+  }
+  .envelope:hover{ transform: rotate(0) scale(1.03); }
+  .envBack{
+    position:absolute; inset:0;
+    background: linear-gradient(135deg,#ff8ac6,#ff5aa9);
+    border-radius: 16px;
+  }
+  .envTop{
+    position:absolute; left:0; right:0; top:0;
+    height: 0; width:0;
+    border-left:135px solid transparent;
+    border-right:135px solid transparent;
+    border-top:95px solid #ff3f9f;
+    transform-origin: top;
+    transform: rotateX(0deg);
+    transition: transform .55s ease;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+  }
+  .envelope.open .envTop{ transform: rotateX(160deg); }
+  .seal{
+    position:absolute;
+    left:50%; top:50%;
+    transform: translate(-50%,-50%);
+    width: 48px; height: 32px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 18px;
+  }
+
+  .envHint{
+    font-size: 16px;
+    opacity: .9;
+    color: #ffb7d6;
+    animation: hintBounce 1.25s ease-in-out infinite;
+    user-select:none;
+  }
+  @keyframes hintBounce{
+    0%,100%{ transform: translateY(0); opacity:.85; }
+    50%{ transform: translateY(-6px); opacity:1; }
+  }
+
+  .letterShell{
+    width:min(740px, 100%);
+    background: rgba(0,0,0,0.55);
+    border-radius: 18px;
+    padding: 0;
+    box-shadow: 0 18px 42px rgba(0,0,0,0.55);
+    border: 2px solid rgba(255,79,163,0.55);
+    position: relative;
+    overflow:hidden;
+  }
+  .letterInner{
+    padding: 24px 24px 18px;
+    max-height: 80vh;
+    overflow:auto;
+    background:
+      radial-gradient(900px 400px at 50% -10%, rgba(255,79,163,0.10), transparent 60%),
+      rgba(0,0,0,0.55);
+  }
+  .letterTitle{
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--pink2);
+    text-align:center;
+    text-shadow: 0 0 18px rgba(255,79,163,0.28);
+    letter-spacing:.4px;
+    margin: 6px 0 4px;
+  }
+  .subTitle{
+    text-align:center;
+    font-size: 13px;
+    color:#ffd3e8;
+    opacity:.92;
+    margin-top: 2px;
+    letter-spacing:.3px;
+  }
+  .dash{
+    height:1px;
+    background: repeating-linear-gradient(
+      to right,
+      rgba(255,255,255,0.18) 0,
+      rgba(255,255,255,0.18) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    opacity: .9;
+    margin: 12px 0 16px;
+  }
+  .dearest{
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 800;
+    color: #ff9fcb;
+    margin-bottom: 12px;
+  }
+  .letterBody{
+    font-size: 18px;
+    line-height: 1.75;
+    color: #ffd3e8;
+    opacity: .95;
+    white-space: pre-line;
+    transition: opacity .25s ease, transform .25s ease;
+    min-height: 260px;
+  }
+
+  .pageFadeOut{
+    opacity:0 !important;
+    transform: translateY(6px) scale(0.99);
+  }
+  .pageFadeIn{
+    opacity:1 !important;
+    transform: translateY(0) scale(1);
+  }
+
+  .sigRow{
+    margin-top: 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap: 12px;
+    flex-wrap:wrap;
+    color:#ff9fcb;
+    font-weight: 800;
+  }
+  .sigLeft{ font-style: italic; }
+  .sigRight{
+    font-size: 18px;
+    text-shadow: 0 0 14px rgba(255,79,163,0.25);
+  }
+  .bottomEmojis{
+    text-align:center;
+    margin-top: 14px;
+    font-size: 22px;
+    opacity:.95;
+  }
+
+  #nav{
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    z-index: 99999;
+    font-weight: 800;
+    letter-spacing: .5px;
+    user-select:none;
+  }
+  #nav button{
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: #ff9fcb;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 999px;
+    transition: transform .12s ease, opacity .12s ease;
+    backdrop-filter: blur(6px);
+  }
+  #nav button:hover{ transform: scale(1.05); }
+  #nav button:disabled{ opacity: .25; cursor: not-allowed; transform:none; }
+  #pageInfo{
+    color:#ffd3e8;
+    font-size: 13px;
+    opacity: .95;
+  }
+  .navHide{ display:none !important; }
+
+  .socialArea{
+    margin-top: 18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 10px;
+  }
+  .socialRow{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap: 14px;
+    flex-wrap:wrap;
+  }
+
+  .social{
+    position:relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow: 0 14px 24px rgba(0,0,0,0.35);
+    transition: transform .15s ease, filter .15s ease;
+    text-decoration:none;
+  }
+  .social:hover{ transform: translateY(-3px) scale(1.02); }
+
+  .tip{
+    position:absolute;
+    bottom: 68px;
+    left:50%;
+    transform: translateX(-50%) translateY(6px);
+    background: rgba(0,0,0,0.65);
+    color:#ffb7d6;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .15s ease, transform .15s ease;
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+  .social:hover .tip{
+    opacity:1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .igBtn{ background: linear-gradient(135deg, #ff2f97, #ffb2d8); border:none; }
+  .snapBtn{ background: linear-gradient(135deg, #ffe600, #fff59a); border:none; }
+  .spotBtn{ background: linear-gradient(135deg, #1DB954, #7CFFB1); border:none; }
+
+  .igBtn svg, .snapBtn svg, .spotBtn svg{
+    display:block;
+    width: 26px;
+    height: 26px;
+    fill:#fff;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,0.20));
+  }
+  .snapBtn svg{ fill:#111; filter:none; }
+
+  .socialHint{
+    text-align:center;
+    font-size: 13px;
+    color:#ffd3e8;
+    opacity:.92;
+  }
+
+  #afterCredits{
+    display:none;
+    margin-top:18px;
+    text-align:center;
+    font-size:15px;
+    color:#ffb7d6;
+    opacity:.9;
+  }
+
+  @media (max-width:420px){
+    .typeBox{ font-size: 30px; min-height: 104px; }
+    .waitText{ font-size: 40px; }
+    .btn{ min-width: 210px; }
+    .yayTitle{ font-size: 48px; }
+    .letterBody{ font-size: 17px; }
+    .letterShell{ width:min(680px,100%); }
+  }
+</style>
+</head>
+
+<body>
+<canvas id="confettiCanvas"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div id="nav" class="navHide">
+  <button id="prevBtn">‹ PREV</button>
+  <div id="pageInfo"><span id="pageText">PAGE 1 / 9</span></div>
+  <button id="nextBtn">NEXT ›</button>
+</div>
+
+<section class="screen" id="s1">
+  <div class="askWrap">
+    <div class="typeBox">
+      <span id="typeStartText"></span><span class="cursor" id="cursorStart">|</span>
+    </div>
+
+    <div class="hintRow" id="hintRow">👉🏻👈🏻</div>
+
+    <div class="btnStack" id="btnStack" style="display:none;">
+      <button class="btn btnYes" id="yesBtn">YES! 💖</button>
+      <button class="btn btnNo" id="noBtn">no 💗</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen hide" id="s2">
+  <div class="yayWrap">
+    <div class="yayTitle">YAYYYYY!!!</div>
+    <div class="yaySub">Happiee Valentine’s Dayy My Wifeyy!! 💕</div>
+    <div class="emojiLine">💖 💗 💓 💞 💘 🌷 ✨ 💖 💗 💓</div>
+  </div>
+</section>
+
+<section class="screen hide" id="s3">
+  <div class="waitText">
+    <span id="typeWaitText"></span><span class="cursor" id="cursorWait">|</span>
+  </div>
+</section>
+
+<section class="screen hide" id="s4">
+  <div class="envWrap">
+    <div class="envelope" id="env">
+      <div class="envBack"></div>
+      <div class="envTop"></div>
+      <div class="seal">💗</div>
+    </div>
+    <div class="envHint" id="envHint">Tap the Envelope dii 💌</div>
+  </div>
+</section>
+
+<section class="screen hide" id="s5">
+  <div class="letterShell">
+    <div class="letterInner">
+      <div class="letterTitle" id="letterTitle">📖 Our 9 Chapters 📖</div>
+      <div class="subTitle" id="letterSub">page 1… take it slow… like a movie scene 😌</div>
+      <div class="dash"></div>
+
+      <div class="dearest" id="dearestLine">My Dearest Grishma 🤍</div>
+
+      <div class="letterBody pageFadeOut" id="letterBody"></div>
+
+      <div id="lastPageExtras" style="display:none;">
+        <div class="sigRow" style="margin-top:22px;">
+          <div class="sigLeft">Forever & Always Yours,</div>
+          <div class="sigRight">With All My Love.. 💖</div>
+        </div>
+
+        <div class="dash" style="margin-top:16px;"></div>
+        <div class="bottomEmojis">💖 💗 💓 💞 💘</div>
+
+        <div class="socialArea">
+          <div class="socialRow">
+            <a class="social igBtn" id="igLink" href="#" target="_blank" rel="noopener" aria-label="Instagram">
+              <div class="tip" id="igTip">Instagram</div>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm4.2 3.3a4.7 4.7 0 1 1 0 9.4 4.7 4.7 0 0 1 0-9.4Zm0 2a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Zm5.2-2.4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z"/>
+              </svg>
+            </a>
+
+            <a class="social snapBtn" id="snapLink" href="#" target="_blank" rel="noopener" aria-label="Snapchat">
+              <div class="tip" id="snapTip">Snapchat</div>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2c3.4 0 5.8 2.7 5.8 6.1v2.5c0 .5.4.9.9 1.1.6.2 1.3.4 1.3 1.1 0 .6-.7.8-1.4 1.1-.6.2-1.2.5-1.4 1-.3.8.7 1.6 1.4 2 .4.2.7.4.7.8 0 .4-.3.6-.8.7-1.2.3-2.4.2-3.1.9-.5.5-.7 1.5-2.3 1.5-1.1 0-1.6-.4-2.1-.4s-1 .4-2.1.4c-1.6 0-1.8-1-2.3-1.5-.7-.7-1.9-.6-3.1-.9-.5-.1-.8-.3-.8-.7 0-.4.3-.6.7-.8.7-.4 1.7-1.2 1.4-2-.2-.5-.8-.8-1.4-1C4.7 13.9 4 13.7 4 13.1c0-.7.7-.9 1.3-1.1.5-.2.9-.6.9-1.1V8.1C6.2 4.7 8.6 2 12 2Z"/>
+              </svg>
+            </a>
+
+            <a class="social spotBtn" id="spotLink" href="#" target="_blank" rel="noopener" aria-label="Spotify">
+              <div class="tip" id="spotTip">Spotify</div>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.5a.9.9 0 0 1-1.2.3c-2.9-1.8-6.6-2.2-11-1.2a.9.9 0 1 1-.4-1.7c4.8-1.1 9-.6 12.3 1.4.4.2.5.7.3 1.2Zm1.2-2.7a1 1 0 0 1-1.3.3c-3.3-2-8.3-2.6-12.2-1.4a1 1 0 0 1-.6-1.9c4.5-1.4 10-.7 13.8 1.6.5.3.6 1 .3 1.4Zm.1-3a1.1 1.1 0 0 1-1.5.4C12.6 9 7 8.8 3.6 9.9a1.1 1.1 0 1 1-.7-2.1c4-1.3 10.2-1.1 14.6 1.6.5.3.7 1 .4 1.4Z"/>
+              </svg>
+            </a>
+          </div>
+          <div class="socialHint">Instagram / Snap Chat / Spotify 😌💗</div>
+        </div>
+
+        <div id="afterCredits">...and hey dii... if you ever miss me...<br>open this again… and feel me 😌💗</div>
+      </div>
+
+      <div class="dash" style="margin-top:16px;"></div>
+      <div class="bottomEmojis" id="bottomEmojis">🌷 ✨ 💖 ✨ 🌷</div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ========= YOUR LINKS ========= */
+const IG_USERNAME = "fr.tarzan";
+const SNAP_USERNAME = "txarxn";
+const SPOTIFY_PLAYLIST = "https://open.spotify.com/playlist/5WNTEM6G57MCyKGgnFf5S2?si=xyl7_VVOQiKjiDMmr96UJw";
+
+/* ========= TIMINGS ========= */
+const TYPE_SPEED_START = 110;
+const TYPE_LINE_PAUSE  = 900;
+const TYPE_START_DELAY = 600;
+
+const DELAY_YAY_MS = 3200;
+const DELAY_BEFORE_WAIT_MS = 900;
+const WAIT_TYPE_SPEED = 110;
+const DELAY_BEFORE_ENVELOPE_MS = 3500;
+
+/* ========= FLOATING BACKGROUND ========= */
+const floats = ["💗","💖","💘","💕","💞","🌸","✨","💝","🌷","🎀"];
+function spawnFloat(){
+  const el = document.createElement("div");
+  el.className = "float";
+  el.textContent = floats[Math.floor(Math.random()*floats.length)];
+  el.style.left = (Math.random()*100) + "vw";
+  el.style.fontSize = (14 + Math.random()*22) + "px";
+  el.style.animationDuration = (6 + Math.random()*6) + "s";
+  el.style.opacity = (0.35 + Math.random()*0.65);
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 13000);
+}
+setInterval(spawnFloat, 240);
+
+/* ========= SCREENS ========= */
+const s1 = document.getElementById("s1");
+const s2 = document.getElementById("s2");
+const s3 = document.getElementById("s3");
+const s4 = document.getElementById("s4");
+const s5 = document.getElementById("s5");
+
+/* ========= NAV (only on Screen 5) ========= */
+const nav = document.getElementById("nav");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const pageText = document.getElementById("pageText");
+
+function setNavForScreen(activeScreen){
+  if(activeScreen === s5) nav.classList.remove("navHide");
+  else nav.classList.add("navHide");
+}
+
+function show(screen){
+  [s1,s2,s3,s4,s5].forEach(s => s.classList.add("hide"));
+  screen.classList.remove("hide");
+  setNavForScreen(screen);
+}
+
+/* ========= CLEAN TYPING ========= */
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function typeLinesTo(textEl, cursorEl, lines, speed, linePause, startDelay){
+  textEl.textContent = "";
+  cursorEl.style.display = "inline-block";
+  await sleep(startDelay);
+
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    for(let j=0;j<=line.length;j++){
+      const before = lines.slice(0,i).join("\n");
+      const current = line.slice(0,j);
+      textEl.textContent = before + (i>0 ? "\n" : "") + current;
+      await sleep(speed);
+    }
+    if(i !== lines.length - 1) await sleep(linePause);
+  }
+  cursorEl.style.display = "none";
+}
+
+/* ========= START TYPE THEN SHOW BUTTONS ========= */
+const typeStartText = document.getElementById("typeStartText");
+const cursorStart = document.getElementById("cursorStart");
+const hintRow = document.getElementById("hintRow");
+const btnStack = document.getElementById("btnStack");
+
+(async function initStart(){
+  const startLines = [
+    "Hyyy Jennniee…",
+    "I wanna ask you a Thing…",
+    "Will you be My Valentine? 🥺"
+  ];
+  await typeLinesTo(typeStartText, cursorStart, startLines, TYPE_SPEED_START, TYPE_LINE_PAUSE, TYPE_START_DELAY);
+  hintRow.style.display = "block";
+  btnStack.style.display = "flex";
+})();
+
+/* ========= SMOOTH NO TELEPORT ========= */
+const noBtn = document.getElementById("noBtn");
+let movingNo = false;
+
+async function moveNoSmooth() {
+  if(movingNo) return;
+  movingNo = true;
+
+  noBtn.style.opacity = "0";
+  await sleep(70);
+
+  const bw = noBtn.offsetWidth;
+  const bh = noBtn.offsetHeight;
+  const margin = 60;
+
+  const x = Math.random() * (window.innerWidth - bw - margin*2) + margin;
+  const y = Math.random() * (window.innerHeight - bh - margin*2) + margin;
+
+  noBtn.style.position = "fixed";
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+  noBtn.style.zIndex = 9999;
+
+  await sleep(20);
+  noBtn.style.opacity = "1";
+
+  await sleep(140);
+  movingNo = false;
+}
+
+noBtn.addEventListener("mouseover", moveNoSmooth);
+noBtn.addEventListener("mousedown", moveNoSmooth);
+noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoSmooth(); }, {passive:false});
+
+/* ========= CONFETTI ========= */
+const canvas = document.getElementById("confettiCanvas");
+const ctx = canvas.getContext("2d");
+let W,H;
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+let confetti = [];
+function burstConfetti(){
+  confetti = [];
+  const n = 240;
+  for(let i=0;i<n;i++){
+    confetti.push({
+      x: Math.random()*W,
+      y: -20 - Math.random()*220,
+      w: 6 + Math.random()*10,
+      h: 8 + Math.random()*14,
+      vx: -1 + Math.random()*2,
+      vy: 2.6 + Math.random()*4.8,
+      rot: Math.random()*Math.PI,
+      vr: -0.22 + Math.random()*0.44,
+      a: 0.7 + Math.random()*0.3,
+      c: `hsl(${Math.random()*360},90%,65%)`
+    });
+  }
+  const start = performance.now();
+
+  function animate(){
+    ctx.clearRect(0,0,W,H);
+    confetti.forEach(p=>{
+      p.x += p.vx * 3;
+      p.y += p.vy * 3;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.globalAlpha = p.a;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+
+    confetti = confetti.filter(p => p.y < H + 40);
+
+    if(performance.now() - start < 2600) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,W,H);
+  }
+  requestAnimationFrame(animate);
+}
+
+function burstOnOpen(){
+  burstConfetti();
+  setTimeout(burstConfetti, 420);
+}
+
+/* ========= YES FLOW ========= */
+const yesBtn = document.getElementById("yesBtn");
+const typeWaitText = document.getElementById("typeWaitText");
+const cursorWait = document.getElementById("cursorWait");
+
+yesBtn.addEventListener("click", async ()=>{
+  show(s2);
+  burstConfetti();
+
+  await sleep(DELAY_YAY_MS);
+
+  await sleep(DELAY_BEFORE_WAIT_MS);
+  show(s3);
+
+  await typeLinesTo(typeWaitText, cursorWait, ["but wait… there’s something more 💌"], WAIT_TYPE_SPEED, 0, 450);
+
+  await sleep(DELAY_BEFORE_ENVELOPE_MS);
+  show(s4);
+});
+
+/* ========= CHAPTER BOOK CONTENT ========= */
+const letterTitle = document.getElementById("letterTitle");
+const letterSub = document.getElementById("letterSub");
+const dearestLine = document.getElementById("dearestLine");
+const letterBody = document.getElementById("letterBody");
+const bottomEmojis = document.getElementById("bottomEmojis");
+const lastPageExtras = document.getElementById("lastPageExtras");
+const afterCredits = document.getElementById("afterCredits");
+
+const pages = [
+  {
+    title: "📖 Chapter 1… Meet Up 📖",
+    sub: "page 1… where everything started…",
+    dearest: "My Dearest Grishma 🤍",
+    emojis: "🌷 ✨ 💖 ✨ 🌷",
+    lines: [
+      "You sent me that reel one day… about 9 chapters…",
+      "And I kept thinking… why does that feel exactly like us…",
+      "",
+      "Chapter 1… meet up…",
+      "That first moment… where I saw you and my brain acted normal…",
+      "but my heart was like… aiyoo… calm down da… she’s kinda different from others.. 😭💗",
+      "",
+      "It wasn’t even a big scene in my life…",
+      "but somehow… it became the beginning of my favourite story…",
+      "",
+      "From that day… you weren’t just “someone”…",
+      "You slowly became my friend… my close one… my di… my love…"
+    ]
+  },
+  {
+    title: "📖 Chapter 2… Attraction 📖",
+    sub: "page 2… the slow pull…",
+    dearest: "Listen pookie…",
+    emojis: "💖 💗 💓",
+    lines: [
+      "Chapter 2… attraction…",
+      "Not loud… not fast… just that quiet pull…",
+      "",
+      "Like… I’d be doing my thing…",
+      "and suddenly my mind goes… When will I meet her again in those school Intervals… 😭",
+      "",
+      "Your presence started feeling special…",
+      "Your voice started feeling calming…",
+      "Your texts started feeling like comfort…",
+      "",
+      "And I realised…",
+      "I don’t just like you…",
+      "I like the way life feels when you’re in it… 😌💗"
+    ]
+  },
+  {
+    title: "📖 Chapter 3… Confession 📖",
+    sub: "page 3… hearts stop acting like strangers…",
+    dearest: "My wifey…",
+    emojis: "💞 💘 🌷",
+    lines: [
+      "Chapter 3… confession…",
+      "That day truth won… and my whole world paused…",
+      "",
+      "You said it… and I was like…",
+      "is this real… or am I dreaming… 😭",
+      "",
+      "But your actions… your care… your way of being there…",
+      "made everything feel real… not dreamy…",
+      "",
+      "And then… December 4… 8:11 PM…",
+      "that time… that moment… We chose each other…",
+      "",
+      "Because my heart already did… long before I said it… 🤍"
+    ]
+  },
+  {
+    title: "📖 Chapter 4… Misunderstanding 📖",
+    sub: "page 4… the scary chapter…",
+    dearest: "My love…",
+    emojis: "🤍 🫶",
+    lines: [
+      "Chapter 4… misunderstanding…",
+      "That one chapter every real love gets…",
+      "",
+      "Not to break us…",
+      "but to show us what matters…",
+      "",
+      "Sometimes words come out wrong…",
+      "sometimes timing is bad…",
+      "sometimes minds overthink…",
+      "",
+      "But even in that…",
+      "I never saw you as a burden… not even once…",
+      "I just wanted you safe… and oky…",
+      "",
+      "Because losing you in my mind… is my worst fear of my life… 🥺"
+    ]
+  },
+  {
+    title: "📖 Chapter 5… Fix Things Together 📖",
+    sub: "page 5… no running… only us…",
+    dearest: "Dii…",
+    emojis: "💪 💗",
+    lines: [
+      "Chapter 5… fix things together…",
+      "This is the chapter I’m proud of…",
+      "",
+      "Because we didn’t run…",
+      "we didn’t do ego…",
+      "we didn’t do silence games…",
+      "",
+      "We chose to understand…",
+      "we chose to speak…",
+      "we chose “us”…",
+      "",
+      "Promise… I’ll always come back to you…",
+      "even if the day is messy…",
+      "even if my head is full…",
+      "",
+      "Because my peace and everything is you… and only you… 😌💗"
+    ]
+  },
+  {
+    title: "📖 Chapter 6… Fear Of Losing 📖",
+    sub: "page 6… the honest truth…",
+    dearest: "My heart…",
+    emojis: "😔 💗",
+    lines: [
+      "Chapter 6… fear of losing…",
+      "I won’t act like I’m always strong…",
+      "",
+      "Sometimes I get scared…",
+      "not because I doubt you…",
+      "but because I love you that much…",
+      "",
+      "The thought of you feeling alone…",
+      "or you thinking you’re not enough…",
+      "literally breaks me inside…",
+      "",
+      "So listen…",
+      "if you ever feel sad… or tired… or empty…",
+      "just run to me… oky va… 🫶",
+      "",
+      "I’ll be there… no questions… only love…"
+    ]
+  },
+  {
+    title: "📖 Chapter 7… Love And Care 📖",
+    sub: "page 7… the soft chapter…",
+    dearest: "My comfort…",
+    emojis: "💚 😌 ✨",
+    lines: [
+      "Chapter 7… love and care…",
+      "This chapter feels like… home…",
+      "",
+      "You feel like home to me…",
+      "You are my calm in every chaos…",
+      "My heart feels safest with you…",
+      "",
+      "You make ordinary days feel special…",
+      "You make love feel easy and natural…",
+      "",
+      "You are my favorite thought every day…",
+      "You are the reason behind my random smiles…",
+      "",
+      "You’re my sweetest habit…",
+      "my daily dose of happiness…",
+      "my heart’s favourite place to be… 😭💗"
+    ]
+  },
+  {
+    title: "📖 Chapter 8… Forever Plans 📖",
+    sub: "page 8… future chapters…",
+    dearest: "My future…",
+    emojis: "♾️ 🌙 💖",
+    lines: [
+      "Chapter 8… forever plans…",
+      "Not just “today”… not just “this week”…",
+      "",
+      "I want mornings… where you wake up and feel safe…",
+      "I want nights… where you sleep knowing you’re loved…",
+      "",
+      "I want a future where we handle storms together…",
+      "where your tears become mine too…",
+      "and your smiles become my biggest reward…",
+      "",
+      "And one day… after marriage…",
+      "I still want tht our long trip plan…",
+      "bike ride from Hosur to Agra…",
+      "and the Taj Mahal… with you… 😭💗",
+      "",
+      "Not for pics…",
+      "for the feeling… that we made it… together…"
+    ]
+  },
+  {
+    title: "📖 Chapter 9… Always You 📖",
+    sub: "page 9… last page… last line… still you…",
+    dearest: "My everything…",
+    emojis: "💖 💗 ♾️",
+    lines: [
+      "Chapter 9… always you…",
+      "No matter the world… no matter the storms…",
+      "",
+      "Just remember 4 things… always…",
+      "1) I’m always here to support you in any situation…!! 💪",
+      "2) Don’t overthink 🤫",
+      "3) Run to me… whenever you feel sad or alone… 🫶",
+      "4) I love you more than you think… and more than everything 💚🥺",
+      "",
+      "Promise… no ego… no attitude…",
+      "only love… only respect… only us… 😭💪",
+      "",
+      "If my love was a book…",
+      "every page would have your name…",
+      "every chapter would end with…",
+      "",
+      "I love you… Grishma…",
+      "Forever… and always… ♾️❤️"
+    ]
+  }
+];
+
+let pageIndex = 0;
+let typingLock = false;
+let afterCreditsTimer = null;
+
+function updateNavButtons(){
+  pageText.textContent = `PAGE ${pageIndex + 1} / ${pages.length}`;
+  prevBtn.disabled = pageIndex === 0;
+  nextBtn.disabled = pageIndex === pages.length - 1;
+}
+
+async function typePageLines(lines){
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    for(let j=0;j<=line.length;j++){
+      const before = lines.slice(0,i).join("\n");
+      const current = line.slice(0,j);
+      letterBody.textContent = before + (i>0 ? "\n" : "") + current;
+      await sleep(16 + Math.random()*18);
+    }
+    if(i !== lines.length - 1){
+      const extra = (line.endsWith("…") || line.includes("December") || line.includes("Taj Mahal") || line.includes("Chapter")) ? 520 : 260;
+      await sleep(extra);
+    }
+  }
+}
+
+async function goToPage(i){
+  if(typingLock) return;
+  typingLock = true;
+
+  if(afterCreditsTimer) clearTimeout(afterCreditsTimer);
+  afterCreditsTimer = null;
+
+  pageIndex = Math.max(0, Math.min(pages.length - 1, i));
+  updateNavButtons();
+
+  const p = pages[pageIndex];
+  if(!p){
+    letterBody.textContent = "Oops… page missing 😭💗";
+    typingLock = false;
+    return;
+  }
+
+  letterBody.classList.remove("pageFadeIn");
+  letterBody.classList.add("pageFadeOut");
+
+  await sleep(120);
+  letterBody.textContent = "";
+
+  letterTitle.textContent = p.title;
+  letterSub.textContent = p.sub;
+  dearestLine.textContent = p.dearest;
+  bottomEmojis.textContent = p.emojis;
+
+  const isLast = pageIndex === pages.length - 1;
+  lastPageExtras.style.display = isLast ? "block" : "none";
+  afterCredits.style.display = "none";
+
+  await sleep(90);
+  letterBody.classList.remove("pageFadeOut");
+  letterBody.classList.add("pageFadeIn");
+
+  await typePageLines(p.lines);
+
+  if(isLast){
+    afterCreditsTimer = setTimeout(()=>{
+      afterCredits.style.display = "block";
+    }, 2000);
+  }
+
+  typingLock = false;
+}
+
+prevBtn.addEventListener("click", ()=> goToPage(pageIndex - 1));
+nextBtn.addEventListener("click", ()=> goToPage(pageIndex + 1));
+
+document.addEventListener("keydown", (e)=>{
+  if(s5.classList.contains("hide")) return;
+  if(e.key === "ArrowLeft") goToPage(pageIndex - 1);
+  if(e.key === "ArrowRight") goToPage(pageIndex + 1);
+});
+
+/* ========= ENVELOPE -> LETTER ========= */
+const env = document.getElementById("env");
+const envHint = document.getElementById("envHint");
+
+env.addEventListener("click", async ()=>{
+  env.classList.add("open");
+  envHint.style.animation = "none";
+  await sleep(650);
+  show(s5);
+  await sleep(200);
+  burstOnOpen();
+  await sleep(260);
+  goToPage(0);
+});
+
+/* ========= SET SOCIAL LINKS ========= */
+(function setSocial(){
+  const igLink = document.getElementById("igLink");
+  const snapLink = document.getElementById("snapLink");
+  const spotLink = document.getElementById("spotLink");
+
+  const igTip = document.getElementById("igTip");
+  const snapTip = document.getElementById("snapTip");
+  const spotTip = document.getElementById("spotTip");
+
+  igLink.href = "https://instagram.com/" + IG_USERNAME;
+  igTip.textContent = "Instagram • @" + IG_USERNAME;
+
+  snapLink.href = "https://www.snapchat.com/add/" + SNAP_USERNAME;
+  snapTip.textContent = "Snapchat • @" + SNAP_USERNAME;
+
+  spotLink.href = SPOTIFY_PLAYLIST;
+  spotTip.textContent = "Spotify • Playlist";
+})();
+
+/* ========= CONFETTI ON CLICKING YES / ENVELOPE already handled ========= */
+</script>
+
+</body>
+</html>
